@@ -5,11 +5,10 @@ metadata:
   name: weather-api-secret
 type: Opaque
 data:
-  API_KEY: VjVYSlRGVURVUzc2UEJQUzQ5WThKS1Ez  # API_KEY ב-Base64
+  API_KEY: V5XJTFUDUS76PCBPC49Y8JKQ3  # API_KEY ב-Base64
 
 ---
 
-# Deployment לאפליקציה
 apiVersion: apps/v1
 kind: Deployment
 metadata:
