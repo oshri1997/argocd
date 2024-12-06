@@ -1,13 +1,24 @@
+# Service מסוג LoadBalancer עם ALB
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
-  namespace: default
+  name: my-weather-app-lb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "alb"  # הגדרת ALB
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # חשיפה חיצונית
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: "/"  # Health Check
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval-seconds: "10"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout-seconds: "5"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: "3"
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "2"
+  labels:
+    app: my-weather-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
-    app: my-app
+    app: my-weather-app
   ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
+    - name: http
+      protocol: TCP
+      port: 80           # הפורט של ה-ALB
+      targetPort: 5000   # הפורט של האפליקציה

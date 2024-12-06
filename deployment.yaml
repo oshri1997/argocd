@@ -1,19 +1,50 @@
+# Secret להגנה על API_KEY
+apiVersion: v1
+kind: Secret
+metadata:
+  name: weather-api-secret
+type: Opaque
+data:
+  API_KEY: VjVYSlRGVURVUzc2UEJQUzQ5WThKS1Ez  # API_KEY ב-Base64
+
+---
+
+# Deployment לאפליקציה
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: my-weather-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: my-app
+      app: my-weather-app
   template:
     metadata:
       labels:
-        app: my-app
+        app: my-weather-app
     spec:
+      serviceAccountName: ecr-access-sa  # הוספת Service Account
       containers:
-      - name: my-app
-        image: oshri1997/my-weather-app
-        ports:
-        - containerPort: 5000
+        - name: my-weather-app
+          image: 897729114707.dkr.ecr.eu-central-1.amazonaws.com/my-weather-app:1.0.37  # התמונה מ-ECR
+          ports:
+            - containerPort: 5000
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weather-api-secret
+                  key: API_KEY
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
