@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: oshri997/my-weather-app
+        image: oshri1997/my-weather-app
         ports:
         - containerPort: 5000
